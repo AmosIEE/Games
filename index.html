@@ -16,8 +16,8 @@
 <body>
     <canvas class="webgl"></canvas>
     <script type="module">
-        import * as THREE from './source/three.module.js';
-        import { OrbitControls } from './source/OrbitControls.js';
+        import * as THREE from '../../source/three.module.js';
+        import { OrbitControls } from '../../source/OrbitControls.js';
         import THREEx from "./keyboardState.js";
         const canvas = document.querySelector(".webgl");
         // 场景
@@ -89,12 +89,31 @@
         const keyboard = new THREEx.KeyboardState();
         const clock = new THREE.Clock();
 
+        let clock2;
+
+        let space = 0;
+        let startJump = false;
+
         const tick = () => {
 
             const delta = clock.getDelta();
             
             const moveDistance = 5 * delta;
             const rotateAngle = Math.PI / 2 * delta;
+
+            if(startJump) {
+                const elapsedTime = clock2.getElapsedTime()
+                const moveY = Math.PI * (elapsedTime);
+                if(elapsedTime >= 1) {
+                    startJump = false;
+                }
+                box.position.y = 10 * Math.sin(moveY);
+            }
+
+            if (keyboard.pressed("space") && !startJump) {
+                startJump = true;
+                clock2 = new THREE.Clock();
+            }
             
             if (keyboard.pressed("down"))
                 box.translateZ(moveDistance);
@@ -122,7 +141,9 @@
             camera.position.y = cameraOffset.y;
             camera.position.z = cameraOffset.z;
 
-            controls.target = box.position;
+            if(!startJump) {
+                controls.target = box.position;
+            }
 
             controls.update();
 
