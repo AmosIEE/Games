@@ -76,10 +76,13 @@
 
 			init();
 			animate();
-            drawText();
 
             function drawText() {
+				if (document.querySelector('#tag')) {
+					return;
+				}
                 const div = document.createElement('div');
+				div.id = 'tag'
                 document.body.appendChild(div);
                 const a = document.createElement('div');
                 const b = document.createElement('div');
@@ -236,6 +239,7 @@
 				}
 
                 container.addEventListener('click', () => {
+					drawText();
                     fadeToAction(standed ? 'Wave' : 'Jump', 0.2)
 					mixer.addEventListener( 'finished', toNext);                
                 })
